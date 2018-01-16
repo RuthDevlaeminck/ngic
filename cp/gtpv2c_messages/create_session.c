@@ -145,7 +145,7 @@ parse_create_session_request(gtpv2c_header *gtpv2c_rx,
 		    "Dropping packet\n");
 		return -EPERM;
 	}
-	if (!csr->indication_ie
+/*	if (!csr->indication_ie
 		|| !csr->apn_ie
 		|| !csr->apn_restriction_ie
 		|| !csr->bearer_context_to_be_created_ebi
@@ -161,6 +161,7 @@ parse_create_session_request(gtpv2c_header *gtpv2c_rx,
 		fprintf(stderr, "Dropping packet\n");
 		return -EPERM;
 	}
+*/
 	if (IE_TYPE_PTR_FROM_GTPV2C_IE(pdn_type_ie, csr->pdn_type_ie)->ipv6) {
 		fprintf(stderr, "IPv6 Not Yet Implemented - Dropping packet\n");
 		return GTPV2C_CAUSE_PREFERRED_PDN_TYPE_UNSUPPORTED;
@@ -181,12 +182,14 @@ set_create_session_response(gtpv2c_header *gtpv2c_tx,
 	set_ipv4_fteid_ie(gtpv2c_tx, GTPV2C_IFTYPE_S11S4_SGW_GTPC,
 			IE_INSTANCE_ZERO,
 			s11_sgw_ip, context->s11_sgw_gtpc_teid);
+/*
 	set_ipv4_fteid_ie(gtpv2c_tx, GTPV2C_IFTYPE_S5S8_PGW_GTPC,
 			IE_INSTANCE_ONE,
 			pdn->s5s8_pgw_gtpc_ipv4, pdn->s5s8_pgw_gtpc_teid);
+*/
 	set_ipv4_paa_ie(gtpv2c_tx, IE_INSTANCE_ZERO, pdn->ipv4);
-	set_apn_restriction_ie(gtpv2c_tx, IE_INSTANCE_ZERO,
-			pdn->apn_restriction);
+//	set_apn_restriction_ie(gtpv2c_tx, IE_INSTANCE_ZERO,
+//			pdn->apn_restriction);
 	{
 		gtpv2c_ie *bearer_context_group =
 				create_bearer_context_ie(gtpv2c_tx,
@@ -213,11 +216,11 @@ set_create_session_response(gtpv2c_header *gtpv2c_tx,
 				    IE_INSTANCE_ZERO, s1u_sgw_ip,
 				    bearer->s1u_sgw_gtpu_teid));
 		}
-
-		add_grouped_ie_length(bearer_context_group,
+/*		add_grouped_ie_length(bearer_context_group,
 		    set_ipv4_fteid_ie(gtpv2c_tx, GTPV2C_IFTYPE_S5S8_PGW_GTPU,
 				    IE_INSTANCE_TWO, pdn->s5s8_pgw_gtpc_ipv4,
 				    bearer->s1u_sgw_gtpu_teid));
+*/
 	}
 }
 
@@ -268,12 +271,14 @@ process_create_session_request(gtpv2c_header *gtpv2c_rx,
 					create_session_request.mei_ie),
 				ntohs(create_session_request.mei_ie->length));
 	}
+/*
 	if (create_session_request.msisdn_ie) {
 		memcpy(&context->msisdn,
 				IE_TYPE_PTR_FROM_GTPV2C_IE(uint64_t,
 					create_session_request.msisdn_ie),
 				ntohs(create_session_request.msisdn_ie->length));
 	}
+*/
 
 	context->s11_sgw_gtpc_ipv4 = s11_sgw_ip;
 	context->s11_mme_gtpc_teid =
@@ -284,10 +289,10 @@ process_create_session_request(gtpv2c_header *gtpv2c_rx,
 	pdn = context->pdns[ebi_index];
 	{
 		pdn->apn_in_use = apn_requested;
-		pdn->apn_ambr = *IE_TYPE_PTR_FROM_GTPV2C_IE(ambr_ie,
-				create_session_request.apn_ambr_ie);
-		pdn->apn_restriction = *IE_TYPE_PTR_FROM_GTPV2C_IE(uint8_t,
-				create_session_request.apn_restriction_ie);
+		//pdn->apn_ambr = *IE_TYPE_PTR_FROM_GTPV2C_IE(ambr_ie,
+		//    create_session_request.apn_ambr_ie);
+		//pdn->apn_restriction = *IE_TYPE_PTR_FROM_GTPV2C_IE(uint8_t,
+		//    create_session_request.apn_restriction_ie);
 		pdn->ipv4 = ue_ip;
 		pdn->pdn_type = *IE_TYPE_PTR_FROM_GTPV2C_IE(pdn_type_ie,
 				create_session_request.pdn_type_ie);
